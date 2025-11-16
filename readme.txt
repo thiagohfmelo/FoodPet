@@ -1,5 +1,5 @@
 
-ARDUÍNO:
+ARDUÍNO-
 
 Componentes:
 Placa de Arduino Uno R3
@@ -22,7 +22,7 @@ Este código deve ser carregado na sua placa Arduino usando a IDE do Arduino.
 
 --------------------------------------------------------------------------------------------------
 
-Estrutura de Pastas
+Estrutura de Pastas-
 Recomendo esta estrutura para organizar os dados:
 
 Projeto_FoodPet/
@@ -41,7 +41,7 @@ Projeto_FoodPet/
 |-- labels_map.pkl          <-- (Será criado pelo script 2)
 
 
-Dependências (Arquivo requirements.txt)
+Dependências-
 Primeiro, precisamos das bibliotecas. Salve isso abaixo como requirements.txt e rode pip install -r requirements.txt.
 
 numpy
@@ -52,6 +52,7 @@ sounddevice
 soundfile
 joblib
 
+------------------------------------------------------------------------------------------------------
 
 Como Apresentar e Executar:
 Apresente o Hardware: Mostre o food_pet.ino e explique a montagem física.

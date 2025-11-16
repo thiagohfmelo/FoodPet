@@ -1,3 +1,22 @@
+Estrutura de Pastas
+Recomendo esta estrutura para organizar os dados:
+
+Projeto_FoodPet/
+|
+|-- data/                 <-- Pasta para os áudios de treino
+|   |-- alimente/
+|   |-- servir/
+|   |-- background_noise/
+|
+|-- 1_data_collection.py    <-- Script para gravar os áudios
+|-- 2_train_model.py        <-- Script para treinar a IA
+|-- 3_main_app.py           <-- Script principal (rodar o projeto)
+|-- requirements.txt
+|
+|-- pet_feeder_model.pkl    <-- (Será criado pelo script 2)
+|-- labels_map.pkl          <-- (Será criado pelo script 2)
+
+
 Dependências (Arquivo requirements.txt)
 Primeiro, precisamos das bibliotecas. Salve isso abaixo como requirements.txt e rode pip install -r requirements.txt.
 

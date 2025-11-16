@@ -1,3 +1,27 @@
+
+ARDUÍNO:
+
+Componentes:
+Placa de Arduino Uno R3
+
+Servo Motor MG90
+
+Jumpers Macho/Macho
+
+Montagem:
+A montagem do servo é simples:
+
+Fio Vermelho (VCC): Conectar no pino 5V do Arduino.
+
+Fio Marrom/Preto (GND): Conectar no pino GND do Arduino.
+
+Fio Laranja/Amarelo (Sinal): Conectar em um pino digital com PWM (ex: Pino 9).
+
+Código Arduino (food_pet.ino)
+Este código deve ser carregado na sua placa Arduino usando a IDE do Arduino.
+
+--------------------------------------------------------------------------------------------------
+
 Estrutura de Pastas
 Recomendo esta estrutura para organizar os dados:
 

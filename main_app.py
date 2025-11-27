@@ -6,23 +6,26 @@ import joblib
 import time
 
 # --- Configurações ---
-# Mude 'COM3' para a porta serial do seu Arduino (veja na IDE do Arduino)
+# mude 'COM3' para a porta serial do seu Arduino (ver na IDE do Arduino)
 SERIAL_PORT = "COM3" 
 BAUD_RATE = 9600
 SAMPLE_RATE = 22050
-DURATION = 2  # Deve ter a mesma duração dos áudios de treino
-CONFIDENCE_THRESHOLD = 0.7 # Limiar de confiança (0.0 a 1.0)
+# duração da gravação em segundos (mesmo tempo de treinamento)
+DURATION = 2
+# limiar de confiança para aceitar uma predição
+CONFIDENCE_THRESHOLD = 0.65
 
-MODEL_FILE = "pet_feeder_model.pkl"
-LABELS_FILE = "labels_map.pkl"
+MODEL_FILE = "src/model/pet_feeder_model.pkl"
+LABELS_FILE = "src/model/labels_map.pkl"
 # ---------------------
 
+# faz a conexão a porta serial usada pelo Arduino
 def setup_arduino_connection(port, baud):
-    """Tenta conectar ao Arduino pela porta serial."""
     try:
         print(f"Tentando conectar em {port} a {baud}...")
         ser = serial.Serial(port, baud, timeout=1)
-        time.sleep(2) # Espera a conexão serial estabilizar
+        # espera a conexão serial estabilizar
+        time.sleep(2)
         print("Conexão com Arduino estabelecida.")
         return ser
     except serial.SerialException as e:
@@ -34,14 +37,15 @@ def setup_arduino_connection(port, baud):
         print(f"Detalhe do erro: {e}")
         return None
 
+# extrai features de uma gravação ao vivo
 def extract_live_features(recording, sr):
-    """Extrai MFCCs de uma gravação ao vivo."""
     audio = recording.flatten() # Transforma de (N, 1) para (N,)
     mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=13)
     mfccs_mean = np.mean(mfccs.T, axis=0)
     # Redimensiona para [1, N] pois o modelo espera um "batch"
     return mfccs_mean.reshape(1, -1)
 
+# função de loop principal para ouvir e processar comandos
 def main_listener(model, labels_map, arduino_ser):
     """Loop principal: ouve, processa e envia comando."""
     
@@ -50,41 +54,42 @@ def main_listener(model, labels_map, arduino_ser):
     
     while True:
         try:
-            # Grava o áudio do microfone
+            # grava o áudio do microfone
             recording = sd.rec(int(DURATION * SAMPLE_RATE), 
                                samplerate=SAMPLE_RATE, 
                                channels=1, 
                                dtype='float32')
-            sd.wait() # Espera a gravação de 2 segundos terminar
+            # espera a gravação de 2 segundos terminar
+            sd.wait()
 
-            # Extrai as features da gravação
+            # extrai as features da gravação
             features = extract_live_features(recording, SAMPLE_RATE)
             
-            # Faz a predição e obtém as probabilidades
+            # faz a predição e obtém as probabilidades
             prediction_proba = model.predict_proba(features)
             
-            # Pega o índice da classe com maior probabilidade
+            # pega o índice da classe com maior probabilidade
             prediction_index = np.argmax(prediction_proba)
             
-            # Pega a confiança (probabilidade) e o nome da classe
+            # pega a confiança (probabilidade) e o nome da classe
             confidence = prediction_proba[0][prediction_index]
             predicted_label = labels_map[prediction_index]
 
             print(f"Detectado: '{predicted_label}' (Confiança: {confidence:.2f})")
 
-            # Verifica se a confiança é alta O SUFICIENTE
+            # verifica se a confiança é alta O SUFICIENTE
             if confidence >= CONFIDENCE_THRESHOLD:
                 
-                # Verifica se NÃO é ruído de fundo
+                # verifica se NÃO é ruído de fundo
                 if predicted_label not in ["background_noise"]:
                     
                     print(f"=== COMANDO RECONHECIDO: {predicted_label} ===")
                     print("Enviando sinal 'A' para o Arduino...")
                     
-                    # Envia o caractere 'A' (em bytes)
+                    # envia o caractere 'A' (em bytes)
                     arduino_ser.write(b'A')
                     
-                    # Espera 5 segundos para evitar comandos repetidos
+                    # espera 5 segundos para evitar comandos repetidos
                     print("Comando enviado. Aguardando 5s...")
                     time.sleep(5)
                     print("\nPronto para ouvir novamente.")
@@ -97,21 +102,21 @@ def main_listener(model, labels_map, arduino_ser):
 
 if __name__ == "__main__":
     try:
-        # Carrega o modelo e os labels
+        # carrega o modelo e os labels
         model = joblib.load(MODEL_FILE)
         labels_map = joblib.load(LABELS_FILE)
         
-        # Conecta ao Arduino
+        # conecta ao Arduino
         arduino_serial = setup_arduino_connection(SERIAL_PORT, BAUD_RATE)
         
         if arduino_serial:
-            # Inicia o loop de escuta
+            # inicia o loop de escuta
             main_listener(model, labels_map, arduino_serial)
             arduino_serial.close()
             
     except FileNotFoundError:
         print(f"\nERRO: Arquivo de modelo não encontrado.")
         print(f"Certifique-se que '{MODEL_FILE}' e '{LABELS_FILE}' existem.")
-        print("Rode o script '2_train_model.py' primeiro.")
+        print("Rode o script 'src/train_model.py' primeiro.")
     except Exception as e:
         print(f"Erro ao iniciar: {e}")

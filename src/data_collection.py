@@ -13,13 +13,13 @@ SAMPLE_RATE = 22050
 DURATION = 2
 
 # comandos que o modelo deve reconhecer
-COMMANDS = ["alimente", "servir", "background_noise"]
-SAMPLES_PER_COMMAND = 20 # 10-30 amostras, como vcs planejaram
+COMMANDS = ["alimente", "background_noise"]
+SAMPLES_PER_COMMAND = 80 # 10-30 amostras, como vcs planejaram
 
 # cria as pastas e grava os áudios
 def record_audio_samples():
     for command in COMMANDS:
-        folder = os.path.join("data", command)
+        folder = os.path.join("src/data", command)
         os.makedirs(folder, exist_ok=True)
         
         print(f"\n--- Preparando para gravar '{command}' ---")

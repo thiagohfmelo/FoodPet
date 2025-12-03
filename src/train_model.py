@@ -14,9 +14,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 # Configurações ========
-DATA_PATH = "data/"
-MODEL_FILE = "model/pet_feeder_model.pkl"
-LABELS_FILE = "model/labels_map.pkl"
+DATA_PATH = "src/data/"
+MODEL_FILE = "src/model/pet_feeder_model.pkl"
+LABELS_FILE = "src/model/labels_map.pkl"
 SAMPLE_RATE = 22050
 
 # extrai features de um arquivo de áudio
@@ -37,7 +37,7 @@ def load_data():
     features = []
     labels = []
     
-    # Pega os nomes das subpastas (ex: 'alimente', 'servir')
+    # Pega os nomes das subpastas (ex: 'alimente', 'background_noise')
     labels_map = [d for d in os.listdir(DATA_PATH) if os.path.isdir(os.path.join(DATA_PATH, d))]
     
     print(f"Carregando dados das classes: {labels_map}")

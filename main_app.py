@@ -13,7 +13,7 @@ SAMPLE_RATE = 22050
 # duração da gravação em segundos (mesmo tempo de treinamento)
 DURATION = 2
 # limiar de confiança para aceitar uma predição
-CONFIDENCE_THRESHOLD = 0.65
+CONFIDENCE_THRESHOLD = 0.95
 
 MODEL_FILE = "src/model/pet_feeder_model.pkl"
 LABELS_FILE = "src/model/labels_map.pkl"
@@ -50,7 +50,7 @@ def main_listener(model, labels_map, arduino_ser):
     """Loop principal: ouve, processa e envia comando."""
     
     print("\n--- Alimentador Pet ATIVADO ---")
-    print("Ouvindo... Diga 'alimente' ou 'servir'. (Ctrl+C para sair)")
+    print("Ouvindo... Diga 'alimente'. (Ctrl+C para sair)")
     
     while True:
         try:
